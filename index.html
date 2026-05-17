@@ -1,42 +1,31 @@
 <html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title data-id="th-modified">SLFL Match Result Generator S3</title>
+  <title data-id="th-modified">VRS Match Result Generator S3</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Vibrant Core Backgrounds (Liga 1) */
       --bg-dark: #1a0202;
       --bg-light: #7a0b0b;
-
-      /* Liga 2 (Vibrant Blue/Carbon) */
       --liga2-dark: #040e29;
       --liga2-light: #184285;
       --liga2-text: #ffffff;
       --liga2-muted: #94a3b8;
       --liga2-accent: #0ea5e9;
-
-      /* Ultra-Glossy Glass Variables */
       --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
       --glass-border-top: rgba(255, 255, 255, 0.3);
       --glass-border-bottom: rgba(255, 255, 255, 0.05);
       --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-
-      /* Accents */
       --accent: #ffffff;
       --highlight: #ff3a30;
       --text-color: #ffffff;
       --muted: #a1a1aa;
       --gold: #ffd60a;
-
-      /* Cup Mode (Vibrant Gold) */
       --cup-dark: #1c1300;
       --cup-light: #6b4c00;
-
-      /* Futsal Mode (Neon Purple/Slate) */
       --futsal-dark: #0f041c;
       --futsal-light: #400f7a;
       --futsal-accent1: #00f3ff;
@@ -73,7 +62,6 @@
       align-items: flex-start;
     }
 
-    /* --- CONTROL PANEL --- */
     .controls {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border-bottom);
@@ -130,9 +118,7 @@
       transition: all 0.3s;
     }
 
-    body.liga2-bg .mode-btn {
-      color: var(--liga2-muted);
-    }
+    body.liga2-bg .mode-btn { color: var(--liga2-muted); }
 
     .mode-btn.active.league {
       background: var(--highlight);
@@ -215,9 +201,7 @@
       margin-bottom: 20px;
     }
 
-    body.liga2-bg .controls-header {
-      border-bottom-color: rgba(255, 255, 255, 0.1);
-    }
+    body.liga2-bg .controls-header { border-bottom-color: rgba(255, 255, 255, 0.1); }
 
     .controls h2 {
       margin: 0;
@@ -254,9 +238,7 @@
       box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
+    .form-group { margin-bottom: 16px; }
 
     .form-group-header {
       display: flex;
@@ -274,18 +256,11 @@
       text-transform: uppercase;
     }
 
-    body.liga2-bg .form-group label {
-      color: var(--liga2-muted);
-    }
+    body.liga2-bg .form-group label { color: var(--liga2-muted); }
 
-    .form-row {
-      display: flex;
-      gap: 12px;
-    }
+    .form-row { display: flex; gap: 12px; }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       background: rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -302,9 +277,7 @@
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    body.liga2-bg input,
-    body.liga2-bg select,
-    body.liga2-bg textarea {
+    body.liga2-bg input, body.liga2-bg select, body.liga2-bg textarea {
       background: rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--liga2-text);
@@ -322,35 +295,21 @@
       background-size: 14px;
     }
 
-    select option {
-      background-color: #110202;
-      color: white;
-    }
+    select option { background-color: #110202; color: white; }
+    body.liga2-bg select option { background-color: #020617; color: white; }
 
-    body.liga2-bg select option {
-      background-color: #020617;
-      color: white;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: rgba(255, 255, 255, 0.6);
       background: rgba(0, 0, 0, 0.6);
     }
 
-    body.liga2-bg input:focus,
-    body.liga2-bg select:focus,
-    body.liga2-bg textarea:focus {
+    body.liga2-bg input:focus, body.liga2-bg select:focus, body.liga2-bg textarea:focus {
       border-color: var(--liga2-accent);
       background: rgba(0, 0, 0, 0.7);
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 50px;
-    }
+    textarea { resize: vertical; min-height: 50px; }
 
     .score-input {
       width: 65px;
@@ -414,11 +373,8 @@
       box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
     }
 
-    .btn-download:active {
-      transform: scale(0.97);
-    }
+    .btn-download:active { transform: scale(0.97); }
 
-    /* --- GRAPHIC WRAPPER --- */
     .graphic-wrapper {
       width: 100%;
       max-width: 600px;
@@ -428,11 +384,8 @@
       -ms-overflow-style: none;
     }
 
-    .graphic-wrapper::-webkit-scrollbar {
-      display: none;
-    }
+    .graphic-wrapper::-webkit-scrollbar { display: none; }
 
-    /* --- THE EXPORT LOCKDOWN FIX --- */
     body.exporting .graphic-preview {
       position: fixed !important;
       top: 0 !important;
@@ -446,7 +399,6 @@
       border-radius: 20px !important;
     }
 
-    /* --- LIVE GRAPHIC PREVIEW --- */
     .graphic-preview {
       background: radial-gradient(circle at top, var(--bg-light) 0%, var(--bg-dark) 100%);
       border-radius: 20px;
@@ -461,16 +413,12 @@
       z-index: 1;
     }
 
-    .graphic-preview * {
-      font-family: 'Ataria', 'Orbitron', sans-serif !important;
-    }
+    .graphic-preview * { font-family: 'Ataria', 'Orbitron', sans-serif !important; }
 
     .graphic-preview::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 35%;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
       pointer-events: none;
@@ -480,10 +428,7 @@
     .graphic-preview::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
       background-size: 20px 20px;
       z-index: -2;
@@ -492,8 +437,7 @@
 
     .s3-watermark {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       font-size: 250px;
       font-weight: 900;
@@ -503,11 +447,7 @@
       font-style: italic;
     }
 
-    .graphic-header,
-    .scoreboard,
-    .events-section,
-    .match-notes,
-    .graphic-footer {
+    .graphic-header, .scoreboard, .events-section, .match-notes, .graphic-footer {
       position: relative;
       z-index: 2;
     }
@@ -527,13 +467,9 @@
     }
 
     .graphic-preview.liga2-mode .stadium-name,
-    .graphic-preview.liga2-mode .graphic-footer {
-      color: var(--liga2-muted);
-    }
+    .graphic-preview.liga2-mode .graphic-footer { color: var(--liga2-muted); }
 
-    .graphic-preview.liga2-mode .footer-item strong {
-      color: var(--liga2-text);
-    }
+    .graphic-preview.liga2-mode .footer-item strong { color: var(--liga2-text); }
 
     .graphic-preview.cup-mode {
       background: radial-gradient(circle at top, var(--cup-light) 0%, var(--cup-dark) 100%);
@@ -541,9 +477,7 @@
 
     .graphic-preview.cup-mode .match-status,
     .graphic-preview.cup-mode .goal-icon,
-    .graphic-preview.cup-mode .forfeit-text {
-      color: var(--gold);
-    }
+    .graphic-preview.cup-mode .forfeit-text { color: var(--gold); }
 
     .graphic-preview.futsal-mode {
       background: radial-gradient(circle at top, var(--futsal-light) 0%, var(--futsal-dark) 100%);
@@ -575,11 +509,8 @@
 
     .graphic-preview.friendlies-mode .match-status,
     .graphic-preview.friendlies-mode .goal-icon,
-    .graphic-preview.friendlies-mode .motm-text {
-      color: #ffffff;
-    }
+    .graphic-preview.friendlies-mode .motm-text { color: #ffffff; }
 
-    /* --- THE PERFECT CENTERING FIX FOR THE HEADER --- */
     .graphic-header {
       display: flex;
       justify-content: space-between;
@@ -588,7 +519,6 @@
       padding-bottom: 15px;
       margin-bottom: 25px;
       position: relative;
-      /* Crucial for absolute centering */
     }
 
     .league-logo {
@@ -603,7 +533,6 @@
       filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.3));
     }
 
-    /* Absolutely position the center block so left/right elements don't push it */
     .header-center {
       position: absolute;
       left: 50%;
@@ -614,7 +543,6 @@
       gap: 12px;
     }
 
-    /* Make title ALWAYS visible now, instead of just on download */
     .graphic-header h2 {
       display: block !important;
       margin: 0;
@@ -626,11 +554,8 @@
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
     }
 
-    .liga2-mode .graphic-header h2 {
-      color: var(--liga2-text);
-    }
+    .liga2-mode .graphic-header h2 { color: var(--liga2-text); }
 
-    /* Polished Bracket matching screenshot */
     .mini-bracket {
       display: none;
       align-items: center;
@@ -643,9 +568,7 @@
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
     }
 
-    .cup-mode .mini-bracket {
-      display: flex;
-    }
+    .cup-mode .mini-bracket { display: flex; }
 
     .bracket-icon {
       width: 12px;
@@ -660,10 +583,8 @@
     .bracket-icon::after {
       content: '';
       position: absolute;
-      top: 50%;
-      right: -15px;
-      width: 15px;
-      height: 3px;
+      top: 50%; right: -15px;
+      width: 15px; height: 3px;
       background: var(--gold);
       transform: translateY(-50%);
     }
@@ -682,27 +603,11 @@
       box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
     }
 
-    .liga2-mode .scrim-badge {
-      background: var(--liga2-accent);
-      color: white;
-      box-shadow: 0 2px 10px rgba(14, 165, 233, 0.4);
-    }
+    .liga2-mode .scrim-badge { background: var(--liga2-accent); color: white; box-shadow: 0 2px 10px rgba(14, 165, 233, 0.4); }
+    .futsal-mode .scrim-badge { background: var(--futsal-accent2); color: white; box-shadow: 0 2px 10px rgba(255, 0, 230, 0.4); }
+    .friendlies-mode .scrim-badge { background: #ffffff; color: black; box-shadow: 0 2px 10px rgba(255, 255, 255, 0.4); }
 
-    .futsal-mode .scrim-badge {
-      background: var(--futsal-accent2);
-      color: white;
-      box-shadow: 0 2px 10px rgba(255, 0, 230, 0.4);
-    }
-
-    .friendlies-mode .scrim-badge {
-      background: #ffffff;
-      color: black;
-      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.4);
-    }
-
-    .match-info {
-      text-align: right;
-    }
+    .match-info { text-align: right; }
 
     .match-status {
       font-size: 20px;
@@ -713,9 +618,7 @@
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
     }
 
-    .liga2-mode .match-status {
-      color: var(--liga2-accent);
-    }
+    .liga2-mode .match-status { color: var(--liga2-accent); }
 
     .stadium-name {
       font-size: 12px;
@@ -726,7 +629,6 @@
       font-weight: 600;
     }
 
-    /* LOGO & SCOREBOARD CENTRALIZATION FIX */
     .scoreboard {
       display: flex;
       justify-content: center;
@@ -762,13 +664,8 @@
       text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
     }
 
-    .liga2-mode .star-icon {
-      color: var(--liga2-accent);
-    }
-
-    .futsal-mode .star-icon {
-      color: var(--futsal-accent1);
-    }
+    .liga2-mode .star-icon { color: var(--liga2-accent); }
+    .futsal-mode .star-icon { color: var(--futsal-accent1); }
 
     .team-logo-wrapper {
       position: relative;
@@ -787,9 +684,7 @@
       filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
     }
 
-    .liga2-mode .team-logo-display {
-      filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
-    }
+    .liga2-mode .team-logo-display { filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7)); }
 
     .team-name-display {
       height: 50px;
@@ -806,7 +701,6 @@
       padding: 0 5px;
     }
 
-    /* SCORE BOX & MATHEMATICAL CENTERING */
     .score-block {
       display: flex;
       align-items: center;
@@ -818,29 +712,11 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 2px 15px rgba(0, 0, 0, 0.8) !important;
     }
 
-    .liga2-mode .score-block {
-      background: #0c172e !important;
-      border-color: #244170 !important;
-    }
-
-    .cup-mode .score-block {
-      background: #261a00 !important;
-      border-color: #4a3400 !important;
-    }
-
-    .futsal-mode .score-block {
-      background: #180929 !important;
-      border-color: #3b1666 !important;
-    }
-
-    .friendlies-mode .score-block {
-      background: #1a1a1a !important;
-      border-color: #404040 !important;
-    }
-
-    .download-mode .score-block {
-      box-shadow: none !important;
-    }
+    .liga2-mode .score-block { background: #0c172e !important; border-color: #244170 !important; }
+    .cup-mode .score-block { background: #261a00 !important; border-color: #4a3400 !important; }
+    .futsal-mode .score-block { background: #180929 !important; border-color: #3b1666 !important; }
+    .friendlies-mode .score-block { background: #1a1a1a !important; border-color: #404040 !important; }
+    .download-mode .score-block { box-shadow: none !important; }
 
     .score-col {
       display: flex;
@@ -899,13 +775,8 @@
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     }
 
-    .home-events {
-      text-align: left;
-    }
-
-    .away-events {
-      text-align: right;
-    }
+    .home-events { text-align: left; }
+    .away-events { text-align: right; }
 
     .goal-icon {
       color: var(--highlight);
@@ -914,9 +785,7 @@
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
     }
 
-    .liga2-mode .goal-icon {
-      color: var(--liga2-accent);
-    }
+    .liga2-mode .goal-icon { color: var(--liga2-accent); }
 
     .forfeit-text {
       color: var(--highlight);
@@ -926,9 +795,7 @@
       letter-spacing: 1px;
     }
 
-    .liga2-mode .forfeit-text {
-      color: var(--liga2-accent);
-    }
+    .liga2-mode .forfeit-text { color: var(--liga2-accent); }
 
     .match-notes {
       display: none;
@@ -956,10 +823,7 @@
       letter-spacing: 1px;
     }
 
-    .footer-item strong {
-      color: white;
-      font-weight: 800;
-    }
+    .footer-item strong { color: white; font-weight: 800; }
 
     .motm-text {
       color: var(--gold);
@@ -967,14 +831,8 @@
       text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
     }
 
-    .futsal-mode .motm-text {
-      color: var(--futsal-accent1);
-      text-shadow: 0 2px 8px rgba(0, 243, 255, 0.4);
-    }
-
-    .liga2-mode .motm-text {
-      color: var(--gold);
-    }
+    .futsal-mode .motm-text { color: var(--futsal-accent1); text-shadow: 0 2px 8px rgba(0, 243, 255, 0.4); }
+    .liga2-mode .motm-text { color: var(--gold); }
 
     .watermark-ron {
       position: absolute;
@@ -1017,10 +875,7 @@
       color: white;
     }
 
-    .guide-fab:hover {
-      transform: scale(1.1);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    }
+    .guide-fab:hover { transform: scale(1.1); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); }
 
     .guide-modal {
       position: fixed;
@@ -1049,19 +904,9 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
 
-    .guide-modal.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
+    .guide-modal.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 
-    .guide-modal h3 {
-      margin: 0 0 15px 0;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .guide-modal h3 { margin: 0 0 15px 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
 
     .guide-modal ul {
       margin: 0;
@@ -1071,15 +916,10 @@
       color: var(--muted);
     }
 
-    body.liga2-bg .guide-modal h3 {
-      color: white;
-    }
-
-    body.liga2-bg .guide-modal ul {
-      color: var(--liga2-muted);
-    }
+    body.liga2-bg .guide-modal h3 { color: white; }
+    body.liga2-bg .guide-modal ul { color: var(--liga2-muted); }
   </style>
-<meta property="og:title" content="SLFL Match Result Generator S3" data-id="th-modified"><meta name="description" content="html" data-id="th-modified"><meta property="og:description" content="html" data-id="th-modified"><meta property="og:image" content="https://tiiny.host/assets/logo-purple-bg.png" data-id="th-modified"><meta property="og:url" content="https://brazzers.tiiny.site/" data-id="th-modified"><meta property="og:type" content="website" data-id="th-modified"><script defer="" data-domain="brazzers.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+</head>
 
 <body style="background: radial-gradient(circle at top center, var(--bg-light) 0%, var(--bg-dark) 100%);">
   <div id="image-preloader" style="display: none; width: 0; height: 0; overflow: hidden;"><img src="https://image2url.com/r2/default/images/1772390050613-d612443b-cb40-41b0-98fe-79841bd6261b.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772382022942-92715f33-b43a-418d-b49a-a040013970ca.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1774002260993-89aa2efc-9d17-497b-9c6a-194ed9819cad.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1773766429054-e7d18b29-1a28-434e-bc8a-bdb261907b4f.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772364343704-958c982d-17d9-43be-a369-8d6d86f99933.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1773682507227-f31d7a9b-5faa-4632-86ae-6a9a7a81c2a0.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216248961-4d7bf601-6266-4943-be09-b6533aebd255.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772363864654-c59fb0c8-0380-45dc-8577-4ba3528c0d5e.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1776079329112-0c42adb8-c308-4f57-a89f-e56fbb54b534.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772218430653-f1dcbc07-184e-4987-b7c2-30db0d796b95.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216322117-ba67ca72-05e4-4f43-aee2-c30008999808.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772390124223-88f36335-0625-4a02-af5a-efa7a003a8e5.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772218450108-deead7b5-c484-4b67-8e17-134afc154fb7.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772378561137-533ee20b-f7dd-4f20-b23f-f0281cbe5159.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772363940633-0851c956-9517-48ce-a145-23443ec3da85.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772363992425-31a25e64-f902-497c-861d-fc55f236270d.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216616744-7577467b-f745-40da-bfff-1dfcce1de21c.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772364405665-89e43b31-1c47-483a-87a0-eecbc82fde69.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216558206-3c1a786b-bfbe-45b0-8525-f28034735617.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1776463034505-4c089357-8e20-420a-bca4-df9738518732.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1775947147739-dc888d5b-f179-4fa6-85f7-95bad6f48c57.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1775947198701-7060c2b9-dc3d-48c9-8700-34601d1e4c2c.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772217363769-854453e0-0fc9-4445-96f1-e22b7743f48d.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772354514455-d06b9e67-f0c6-4928-8c12-791c86b277ca.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772981892142-680d220a-6045-4727-a29e-04dd5431a22c.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"></div>
@@ -1107,10 +947,10 @@
       <div class="form-group" id="cup-round-container" style="display: none;">
         <label>Tournament Round</label>
         <select id="input-cup-round" onchange="updateGraphic()">
-                <option value="Round of 16">Round of 16</option>
-                <option value="Quarter-Final">Quarter-Final</option>
-                <option value="Semi-Final">Semi-Final</option>
-                <option value="The Final">The Final</option>
+          <option value="Round of 16">Round of 16</option>
+          <option value="Quarter-Final">Quarter-Final</option>
+          <option value="Semi-Final">Semi-Final</option>
+          <option value="The Final">The Final</option>
         </select>
       </div>
 
@@ -1126,7 +966,7 @@
         </div>
         <div class="form-group" style="flex: 1.5;">
           <label>Stadium Name</label>
-          <input type="text" id="input-stadium" value="SLFL Arena" oninput="updateGraphic()">
+          <input type="text" id="input-stadium" value="VRS Arena" oninput="updateGraphic()">
         </div>
       </div>
 
@@ -1149,9 +989,8 @@
             <label>Home Team</label>
             <button class="btn-fft" onclick="triggerForfeit('home')">FFT</button>
           </div>
-          <select id="input-home-team" onchange="updateGraphic()"><option value="0">ACS VIITORUL</option><option value="1">CFR CLUJ</option><option value="2">FARUL CONSTANTA</option><option value="3">FC RAPID</option><option value="4">FCSB</option><option value="5">OTELUL</option><option value="6">U CLUJ</option><option value="7">UNIREA SLOBOZIA</option></select>
+          <select id="input-home-team" onchange="updateGraphic()"></select>
         </div>
-
         <div class="form-group">
           <label style="margin-bottom: 6px; display:block;">Score</label>
           <input type="number" id="input-home-score" class="score-input" value="0" min="0" oninput="updateGraphic()">
@@ -1179,7 +1018,7 @@
             <label>Away Team</label>
             <button class="btn-fft" onclick="triggerForfeit('away')">FFT</button>
           </div>
-          <select id="input-away-team" onchange="updateGraphic()"><option value="0">ACS VIITORUL</option><option value="1">CFR CLUJ</option><option value="2">FARUL CONSTANTA</option><option value="3">FC RAPID</option><option value="4">FCSB</option><option value="5">OTELUL</option><option value="6">U CLUJ</option><option value="7">UNIREA SLOBOZIA</option></select>
+          <select id="input-away-team" onchange="updateGraphic()"></select>
         </div>
         <div class="form-group">
           <label style="margin-bottom: 6px; display:block;">Score</label>
@@ -1230,7 +1069,7 @@
           <div class="match-info">
             <div id="display-scrim-badge" class="scrim-badge">SCRIM</div>
             <div id="display-status" class="match-status">Full Time</div>
-            <div class="stadium-name">📍 <span id="display-stadium">SLFL Arena</span></div>
+            <div class="stadium-name">📍 <span id="display-stadium">VRS Arena</span></div>
           </div>
         </div>
 
@@ -1302,29 +1141,28 @@
     let isScrim = false;
 
     const LIGA1_LOGO_URL = "https://photos.app.goo.gl/qLVoyEW5KmdX7AmA9";
-    const LIGA2_LOGO_URL = "https://photos.app.goo.gl/NKxhQs6FTyqaWvgK9"; 
+    const LIGA2_LOGO_URL = "https://photos.app.goo.gl/NKxhQs6FTyqaWvgK9";
     const CUP_LOGO_URL = "https://photos.app.goo.gl/BLZ5RkJzkbNVwfrb9";
     const FUTSAL_LOGO_URL = "https://photos.app.goo.gl/1sPdb8UjfSKBeLC5A";
-    const GENERAL_SLFL_LOGO = "https://photos.app.goo.gl/XKPbTuoZWwJZjzN66";
+    const GENERAL_VRS_LOGO = "https://photos.app.goo.gl/XKPbTuoZWwJZjzN66";
 
     const teamStarsConfig = {
         "Rapid Bucuresti": 1,
     };
 
     const teamsLiga1 = [
-        {name:"Rapid Bucuresti", logo:"https://image2url.com/r2/default/images/1772218430653-f1dcbc07-184e-4987-b7c2-30db0d796b95.png"}, 
-        {name:"CFR Cluj", logo:"https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/CFR_Cluj_badge.svg/960px-CFR_Cluj_badge.svg.png"}, 
-        {name:"Farul Constanta", logo:"https://upload.wikimedia.org/wikipedia/en/5/52/FC_Farul_Constan%C8%9Ba_logo.png"}, 
-        {name:"FC Arges", logo:"https://upload.wikimedia.org/wikipedia/en/f/f7/FC_Arges_Pitesti_badge.png"}, 
-        {name:"FC Botosani", logo:"https://upload.wikimedia.org/wikipedia/en/thumb/e/e7/FC_Botosani_2022_logo.svg/500px-FC_Botosani_2022_logo.svg.png"}, 
-        {name:"Poli. Timisoara", logo:"https://upload.wikimedia.org/wikipedia/en/thumb/5/54/SS_Politehnica_Timisoara_logo.svg/500px-SS_Politehnica_Timisoara_logo.svg.png"}, 
-        {name:"Cetatea Suceava", logo:"https://upload.wikimedia.org/wikipedia/en/8/8c/CSM_Cetatea_Suceava.png"}, 
-        {name:"Metalul Buzau", logo:"https://upload.wikimedia.org/wikipedia/en/4/41/AFC_Metalul_Buz%C4%83u_logo.png"}, 
-        {name:"Dinamo Bucuresti", logo:"https://photos.app.goo.gl/tvMxFe3gdoA8zdSU8"}, 
-        {name:"Gloria Buzau", logo:"https://upload.wikimedia.org/wikipedia/en/d/dd/FC_Buz%C4%83u_logo.png"}, 
+        {name:"Rapid Bucuresti", logo:"https://image2url.com/r2/default/images/1772218430653-f1dcbc07-184e-4987-b7c2-30db0d796b95.png"},
+        {name:"CFR Cluj", logo:"https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/CFR_Cluj_badge.svg/960px-CFR_Cluj_badge.svg.png"},
+        {name:"Farul Constanta", logo:"https://upload.wikimedia.org/wikipedia/en/5/52/FC_Farul_Constan%C8%9Ba_logo.png"},
+        {name:"FC Arges", logo:"https://upload.wikimedia.org/wikipedia/en/f/f7/FC_Arges_Pitesti_badge.png"},
+        {name:"FC Botosani", logo:"https://upload.wikimedia.org/wikipedia/en/thumb/e/e7/FC_Botosani_2022_logo.svg/500px-FC_Botosani_2022_logo.svg.png"},
+        {name:"Poli. Timisoara", logo:"https://upload.wikimedia.org/wikipedia/en/thumb/5/54/SS_Politehnica_Timisoara_logo.svg/500px-SS_Politehnica_Timisoara_logo.svg.png"},
+        {name:"Cetatea Suceava", logo:"https://upload.wikimedia.org/wikipedia/en/8/8c/CSM_Cetatea_Suceava.png"},
+        {name:"Metalul Buzau", logo:"https://upload.wikimedia.org/wikipedia/en/4/41/AFC_Metalul_Buz%C4%83u_logo.png"},
+        {name:"Dinamo Bucuresti", logo:"https://photos.app.goo.gl/tvMxFe3gdoA8zdSU8"},
+        {name:"Gloria Buzau", logo:"https://upload.wikimedia.org/wikipedia/en/d/dd/FC_Buz%C4%83u_logo.png"},
     ];
-    
-    // UPDATED UTA ARAD
+
     const teamsLiga2 = [
         {name:"AFC METALUL BUZĂU", logo:"https://image2url.com/r2/default/images/1774002260993-89aa2efc-9d17-497b-9c6a-194ed9819cad.png"},
         {name:"U CRAIOVA", logo:"https://image2url.com/r2/default/images/1772364405665-89e43b31-1c47-483a-87a0-eecbc82fde69.png"},
@@ -1363,7 +1201,7 @@
     function preloadImages() {
         const cacheDiv = document.getElementById('image-preloader');
         const allImages = [...teamsFriendlies].map(t => t.logo);
-        allImages.push(LIGA1_LOGO_URL, LIGA2_LOGO_URL, CUP_LOGO_URL, FUTSAL_LOGO_URL, GENERAL_SLFL_LOGO);
+        allImages.push(LIGA1_LOGO_URL, LIGA2_LOGO_URL, CUP_LOGO_URL, FUTSAL_LOGO_URL, GENERAL_VRS_LOGO);
         allImages.forEach(src => {
             const img = new Image();
             img.src = src;
@@ -1377,7 +1215,7 @@
     window.onload = () => {
         preloadImages();
         populateDropdowns();
-        setMode('league'); 
+        setMode('league');
     };
 
     function toggleGuide() {
@@ -1394,7 +1232,7 @@
         isScrim = !isScrim;
         const btn = document.getElementById('btn-scrim');
         const badge = document.getElementById('display-scrim-badge');
-        
+
         if (isScrim) {
             btn.classList.add('active');
             btn.innerText = "Scrim: ON";
@@ -1410,7 +1248,7 @@
     function populateDropdowns() {
         const homeSelect = document.getElementById('input-home-team');
         const awaySelect = document.getElementById('input-away-team');
-        
+
         homeSelect.innerHTML = '';
         awaySelect.innerHTML = '';
         activeTeams.forEach((team, index) => {
@@ -1437,10 +1275,10 @@
         document.getElementById('btn-cup').classList.remove('active');
         document.getElementById('btn-futsal').classList.remove('active');
         document.getElementById('btn-friendlies').classList.remove('active');
-        
-        captureArea.className = 'graphic-preview capture-area'; 
+
+        captureArea.className = 'graphic-preview capture-area';
         bodyEl.classList.remove('liga2-bg');
-        
+
         penInputs.forEach(el => el.style.display = "none");
 
         if (mode === 'league') {
@@ -1449,8 +1287,8 @@
             gameweekContainer.style.display = "block";
             roundContainer.style.display = "none";
             miniBracket.style.display = "none";
-            setLeagueTier(currentLeagueTier); 
-            
+            setLeagueTier(currentLeagueTier);
+
         } else if (mode === 'cup') {
             document.getElementById('btn-cup').classList.add('active');
             tierContainer.style.display = "none";
@@ -1458,11 +1296,11 @@
             roundContainer.style.display = "block";
             miniBracket.style.display = "flex";
             penInputs.forEach(el => el.style.display = "block");
-            
+
             captureArea.classList.add('cup-mode');
             logoEl.src = CUP_LOGO_URL;
             bodyEl.style.background = "radial-gradient(circle at top center, var(--cup-light) 0%, var(--cup-dark) 100%)";
-            activeTeams = teamsCup; 
+            activeTeams = teamsCup;
             populateDropdowns();
 
         } else if (mode === 'futsal') {
@@ -1471,7 +1309,7 @@
             gameweekContainer.style.display = "none";
             roundContainer.style.display = "none";
             miniBracket.style.display = "none";
-            
+
             captureArea.classList.add('futsal-mode');
             logoEl.src = FUTSAL_LOGO_URL;
             bodyEl.style.background = "radial-gradient(circle at top center, var(--futsal-light) 0%, var(--futsal-dark) 100%)";
@@ -1484,9 +1322,9 @@
             gameweekContainer.style.display = "none";
             roundContainer.style.display = "none";
             miniBracket.style.display = "none";
-            
+
             captureArea.classList.add('friendlies-mode');
-            logoEl.src = GENERAL_SLFL_LOGO;
+            logoEl.src = GENERAL_VRS_LOGO;
             bodyEl.style.background = "radial-gradient(circle at top center, #222 0%, #000 100%)";
             activeTeams = teamsFriendlies;
             populateDropdowns();
@@ -1500,10 +1338,10 @@
         const logoEl = document.getElementById('display-main-logo');
         const captureArea = document.getElementById('capture-area');
         const bodyEl = document.body;
-        
+
         document.getElementById('btn-liga1').classList.remove('active');
         document.getElementById('btn-liga2').classList.remove('active');
-        captureArea.className = 'graphic-preview capture-area'; 
+        captureArea.className = 'graphic-preview capture-area';
 
         if(tier === 'liga1') {
             document.getElementById('btn-liga1').classList.add('active');
@@ -1517,7 +1355,7 @@
             activeTeams = teamsLiga2;
             captureArea.classList.add('liga2-mode');
             bodyEl.classList.add('liga2-bg');
-            bodyEl.style.background = ""; 
+            bodyEl.style.background = "";
         }
 
         populateDropdowns();
@@ -1535,7 +1373,7 @@
 
     function updateGraphic() {
         const title = document.getElementById('graphic-title');
-        
+
         if (isScrim) {
             title.innerText = "S3 SCRIM MATCH";
         } else {
@@ -1554,13 +1392,13 @@
 
         document.getElementById('display-status').innerText = document.getElementById('input-status').value;
         document.getElementById('display-stadium').innerText = document.getElementById('input-stadium').value;
-        
+
         document.getElementById('display-referee').innerText = document.getElementById('input-referee').value || "---";
         document.getElementById('display-motm').innerText = document.getElementById('input-motm').value || "---";
-        
+
         const notesValue = document.getElementById('input-notes').value.trim();
         const notesDisplay = document.getElementById('display-notes');
-        
+
         if (notesValue) {
             notesDisplay.style.display = "block";
             notesDisplay.innerText = notesValue;
@@ -1572,7 +1410,6 @@
         document.getElementById('display-home-score').innerText = document.getElementById('input-home-score').value;
         document.getElementById('display-away-score').innerText = document.getElementById('input-away-score').value;
 
-        // Pens logic
         const homePensInput = document.getElementById('input-home-pens').value;
         const awayPensInput = document.getElementById('input-away-pens').value;
         const homePensDisplay = document.getElementById('display-home-pens');
@@ -1599,7 +1436,7 @@
             document.getElementById('display-home-logo').src = homeTeam.logo;
             document.getElementById('display-home-stars').innerHTML = getStarsHTML(homeTeam.name);
         }
-        
+
         if (awayTeam) {
             document.getElementById('display-away-name').innerText = awayTeam.name;
             document.getElementById('display-away-logo').src = awayTeam.logo;
@@ -1615,18 +1452,18 @@
     function formatEvents(inputId, displayId, isHome, type) {
         let text = document.getElementById(inputId).value.trim();
         const displayBox = document.getElementById(displayId);
-        
+
         if (text === "") { displayBox.innerHTML = ""; return; }
         if (text === "FORFEIT") { displayBox.innerHTML = `<div class="forfeit-text">Match Forfeited</div>`; return; }
         if (type === 'card') { text = text.replace(/\(Y\)/gi, "🟨").replace(/\(R\)/gi, "🟥"); }
 
         const lines = text.split('\n');
         let html = "";
-        
+
         lines.forEach(line => {
             if (line.trim() !== "") {
                 let icon = type === 'goal' ? `<span class="goal-icon">⚽</span>` : '';
-                if (isHome) { html += `<div>${line} ${icon}</div>`; } 
+                if (isHome) { html += `<div>${line} ${icon}</div>`; }
                 else { html += `<div>${icon} ${line}</div>`; }
             }
         });
@@ -1659,7 +1496,7 @@
     function downloadGraphic() {
         const captureArea = document.getElementById('capture-area');
         const downloadBtn = document.querySelector('.btn-download');
-        
+
         const originalText = downloadBtn.innerText;
         downloadBtn.innerText = "Processing 4K...";
         downloadBtn.disabled = true;
@@ -1667,26 +1504,26 @@
         document.body.classList.add('exporting');
         captureArea.classList.add('download-mode');
         window.scrollTo(0, 0);
-        
+
         setTimeout(() => {
-            html2canvas(captureArea, { 
-                useCORS: true, 
+            html2canvas(captureArea, {
+                useCORS: true,
                 allowTaint: false,
-                scale: 3, 
-                backgroundColor: null 
+                scale: 3,
+                backgroundColor: null
             }).then(canvas => {
                 const link = document.createElement('a');
-                
-                let filename = isScrim ? 'SLFL_S3_Scrim_Result.png' : 'SLFL_S3_Liga1_Result.png';
-                if(!isScrim && currentMode === 'league' && currentLeagueTier === 'liga2') filename = 'SLFL_S3_Liga2_Result.png';
-                if(!isScrim && currentMode === 'cup') filename = 'SLFL_S3_Cup_Result.png';
-                if(!isScrim && currentMode === 'futsal') filename = 'SLFL_S3_Futsal_Result.png';
-                if(!isScrim && currentMode === 'friendlies') filename = 'SLFL_S3_Friendlies_Result.png';
+
+                let filename = isScrim ? 'VRS_S3_Scrim_Result.png' : 'VRS_S3_Liga1_Result.png';
+                if(!isScrim && currentMode === 'league' && currentLeagueTier === 'liga2') filename = 'VRS_S3_Liga2_Result.png';
+                if(!isScrim && currentMode === 'cup') filename = 'VRS_S3_Cup_Result.png';
+                if(!isScrim && currentMode === 'futsal') filename = 'VRS_S3_Futsal_Result.png';
+                if(!isScrim && currentMode === 'friendlies') filename = 'VRS_S3_Friendlies_Result.png';
 
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-                
+
                 document.body.classList.remove('exporting');
                 captureArea.classList.remove('download-mode');
                 downloadBtn.innerText = originalText;
@@ -1703,6 +1540,5 @@
     }
   </script>
 
-
-
+</body></html>
 </body></html>
