@@ -1,0 +1,1708 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title data-id="th-modified">SLFL Match Result Generator S3</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Vibrant Core Backgrounds (Liga 1) */
+      --bg-dark: #1a0202;
+      --bg-light: #7a0b0b;
+
+      /* Liga 2 (Vibrant Blue/Carbon) */
+      --liga2-dark: #040e29;
+      --liga2-light: #184285;
+      --liga2-text: #ffffff;
+      --liga2-muted: #94a3b8;
+      --liga2-accent: #0ea5e9;
+
+      /* Ultra-Glossy Glass Variables */
+      --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+      --glass-border-top: rgba(255, 255, 255, 0.3);
+      --glass-border-bottom: rgba(255, 255, 255, 0.05);
+      --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+
+      /* Accents */
+      --accent: #ffffff;
+      --highlight: #ff3a30;
+      --text-color: #ffffff;
+      --muted: #a1a1aa;
+      --gold: #ffd60a;
+
+      /* Cup Mode (Vibrant Gold) */
+      --cup-dark: #1c1300;
+      --cup-light: #6b4c00;
+
+      /* Futsal Mode (Neon Purple/Slate) */
+      --futsal-dark: #0f041c;
+      --futsal-light: #400f7a;
+      --futsal-accent1: #00f3ff;
+      --futsal-accent2: #ff00e6;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top center, var(--bg-light) 0%, var(--bg-dark) 100%);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 10px;
+      box-sizing: border-box;
+      transition: background 0.5s ease, color 0.5s ease;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.liga2-bg {
+      background: radial-gradient(circle at top center, var(--liga2-light) 0%, var(--liga2-dark) 100%);
+      color: var(--liga2-text);
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      max-width: 1100px;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* --- CONTROL PANEL --- */
+    .controls {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border-bottom);
+      border-top: 1px solid var(--glass-border-top);
+      border-left: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 25px 20px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      backdrop-filter: blur(30px) saturate(160%);
+      -webkit-backdrop-filter: blur(30px) saturate(160%);
+      box-shadow: var(--glass-shadow);
+      box-sizing: border-box;
+      transition: all 0.4s ease;
+      position: relative;
+    }
+
+    body.liga2-bg .controls {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(14, 165, 233, 0.4);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      color: var(--liga2-text);
+    }
+
+    .mode-toggle {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+
+    body.liga2-bg .mode-toggle {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 10px 5px;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+
+    body.liga2-bg .mode-btn {
+      color: var(--liga2-muted);
+    }
+
+    .mode-btn.active.league {
+      background: var(--highlight);
+      color: white;
+      box-shadow: 0 3px 10px rgba(255, 58, 48, 0.4);
+    }
+
+    body.liga2-bg .mode-btn.active.league {
+      background: var(--liga2-accent);
+      color: white;
+      box-shadow: 0 2px 12px rgba(14, 165, 233, 0.4);
+    }
+
+    .mode-btn.active.cup {
+      background: linear-gradient(180deg, #ffe033 0%, #ccaa00 100%);
+      color: black;
+      box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
+    }
+
+    .mode-btn.active.futsal {
+      background: rgba(0, 243, 255, 0.2);
+      border: 1px solid var(--futsal-accent1);
+      color: var(--futsal-accent1);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .mode-btn.active.friendlies {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid #ffffff;
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .sub-toggle {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .sub-btn {
+      flex: 1;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    body.liga2-bg .sub-btn {
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--liga2-muted);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .sub-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    body.liga2-bg .sub-btn.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-color: var(--liga2-accent);
+      box-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
+    }
+
+    .controls-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    body.liga2-bg .controls-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .controls h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn-scrim {
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .btn-scrim.active {
+      background: var(--gold);
+      color: black;
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    }
+
+    body.liga2-bg .btn-scrim.active {
+      background: var(--liga2-accent);
+      color: white;
+      border-color: var(--liga2-accent);
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    body.liga2-bg .form-group label {
+      color: var(--liga2-muted);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      -webkit-appearance: none;
+      appearance: none;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    body.liga2-bg input,
+    body.liga2-bg select,
+    body.liga2-bg textarea {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--liga2-text);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    select {
+      background: rgba(0, 0, 0, 0.4) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 12px center;
+      background-size: 14px;
+      padding-right: 35px;
+    }
+
+    body.liga2-bg select {
+      background: rgba(0, 0, 0, 0.4) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 12px center;
+      background-size: 14px;
+    }
+
+    select option {
+      background-color: #110202;
+      color: white;
+    }
+
+    body.liga2-bg select option {
+      background-color: #020617;
+      color: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    body.liga2-bg input:focus,
+    body.liga2-bg select:focus,
+    body.liga2-bg textarea:focus {
+      border-color: var(--liga2-accent);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+
+    .score-input {
+      width: 65px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 12px 0;
+    }
+
+    .btn-fft {
+      background: rgba(255, 58, 48, 0.15);
+      color: var(--highlight);
+      border: 1px solid rgba(255, 58, 48, 0.4);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-fft:hover {
+      background: var(--highlight);
+      color: white;
+      box-shadow: 0 0 10px rgba(255, 58, 48, 0.4);
+    }
+
+    body.liga2-bg .btn-fft {
+      border-color: var(--liga2-accent);
+      color: var(--liga2-accent);
+      background: rgba(14, 165, 233, 0.15);
+    }
+
+    body.liga2-bg .btn-fft:hover {
+      background: var(--liga2-accent);
+      color: white;
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn-download {
+      width: 100%;
+      background: linear-gradient(180deg, #ffffff 0%, #d1d1d6 100%);
+      color: black;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    body.liga2-bg .btn-download {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-download:active {
+      transform: scale(0.97);
+    }
+
+    /* --- GRAPHIC WRAPPER --- */
+    .graphic-wrapper {
+      width: 100%;
+      max-width: 600px;
+      overflow-x: auto;
+      border-radius: 20px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .graphic-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* --- THE EXPORT LOCKDOWN FIX --- */
+    body.exporting .graphic-preview {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 800px !important;
+      min-width: 800px !important;
+      max-width: 800px !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      transform: scale(1) !important;
+      border-radius: 20px !important;
+    }
+
+    /* --- LIVE GRAPHIC PREVIEW --- */
+    .graphic-preview {
+      background: radial-gradient(circle at top, var(--bg-light) 0%, var(--bg-dark) 100%);
+      border-radius: 20px;
+      min-width: 600px;
+      width: 100%;
+      padding: 35px 35px 45px 35px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      box-sizing: border-box;
+      z-index: 1;
+    }
+
+    .graphic-preview * {
+      font-family: 'Ataria', 'Orbitron', sans-serif !important;
+    }
+
+    .graphic-preview::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 35%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .graphic-preview::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 20px 20px;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .s3-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 250px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.02);
+      z-index: 0;
+      pointer-events: none;
+      font-style: italic;
+    }
+
+    .graphic-header,
+    .scoreboard,
+    .events-section,
+    .match-notes,
+    .graphic-footer {
+      position: relative;
+      z-index: 2;
+    }
+
+    .graphic-preview.liga2-mode {
+      background: radial-gradient(circle at top, var(--liga2-light) 0%, var(--liga2-dark) 100%);
+      color: var(--liga2-text);
+    }
+
+    .graphic-preview.liga2-mode::before {
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.05) 0%, rgba(14, 165, 233, 0) 100%);
+    }
+
+    .graphic-preview.liga2-mode .team-name-display {
+      color: var(--liga2-text);
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .graphic-preview.liga2-mode .stadium-name,
+    .graphic-preview.liga2-mode .graphic-footer {
+      color: var(--liga2-muted);
+    }
+
+    .graphic-preview.liga2-mode .footer-item strong {
+      color: var(--liga2-text);
+    }
+
+    .graphic-preview.cup-mode {
+      background: radial-gradient(circle at top, var(--cup-light) 0%, var(--cup-dark) 100%);
+    }
+
+    .graphic-preview.cup-mode .match-status,
+    .graphic-preview.cup-mode .goal-icon,
+    .graphic-preview.cup-mode .forfeit-text {
+      color: var(--gold);
+    }
+
+    .graphic-preview.futsal-mode {
+      background: radial-gradient(circle at top, var(--futsal-light) 0%, var(--futsal-dark) 100%);
+    }
+
+    .graphic-preview.futsal-mode .match-status {
+      color: var(--futsal-accent2);
+      text-shadow: 0 0 15px rgba(255, 0, 230, 0.6);
+    }
+
+    .graphic-preview.futsal-mode .score-number {
+      color: var(--futsal-accent1);
+      text-shadow: 0 0 20px rgba(0, 243, 255, 0.7);
+    }
+
+    .graphic-preview.futsal-mode .goal-icon {
+      color: var(--futsal-accent2);
+      filter: drop-shadow(0 0 8px var(--futsal-accent2));
+    }
+
+    .graphic-preview.futsal-mode .team-name-display {
+      font-style: italic;
+      letter-spacing: 2px;
+    }
+
+    .graphic-preview.friendlies-mode {
+      background: radial-gradient(circle at top, #222222 0%, #000000 100%);
+    }
+
+    .graphic-preview.friendlies-mode .match-status,
+    .graphic-preview.friendlies-mode .goal-icon,
+    .graphic-preview.friendlies-mode .motm-text {
+      color: #ffffff;
+    }
+
+    /* --- THE PERFECT CENTERING FIX FOR THE HEADER --- */
+    .graphic-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      position: relative;
+      /* Crucial for absolute centering */
+    }
+
+    .league-logo {
+      height: 45px;
+      width: auto;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+      transition: all 0.3s ease;
+    }
+
+    .cup-mode .league-logo {
+      height: 60px;
+      filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.3));
+    }
+
+    /* Absolutely position the center block so left/right elements don't push it */
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* Make title ALWAYS visible now, instead of just on download */
+    .graphic-header h2 {
+      display: block !important;
+      margin: 0;
+      font-size: 26px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .liga2-mode .graphic-header h2 {
+      color: var(--liga2-text);
+    }
+
+    /* Polished Bracket matching screenshot */
+    .mini-bracket {
+      display: none;
+      align-items: center;
+      gap: 18px;
+      font-size: 16px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 800;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .cup-mode .mini-bracket {
+      display: flex;
+    }
+
+    .bracket-icon {
+      width: 12px;
+      height: 30px;
+      border-top: 3px solid var(--gold);
+      border-right: 3px solid var(--gold);
+      border-bottom: 3px solid var(--gold);
+      border-radius: 0 6px 6px 0;
+      position: relative;
+    }
+
+    .bracket-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -15px;
+      width: 15px;
+      height: 3px;
+      background: var(--gold);
+      transform: translateY(-50%);
+    }
+
+    .scrim-badge {
+      display: none;
+      background: var(--gold);
+      color: black;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+    }
+
+    .liga2-mode .scrim-badge {
+      background: var(--liga2-accent);
+      color: white;
+      box-shadow: 0 2px 10px rgba(14, 165, 233, 0.4);
+    }
+
+    .futsal-mode .scrim-badge {
+      background: var(--futsal-accent2);
+      color: white;
+      box-shadow: 0 2px 10px rgba(255, 0, 230, 0.4);
+    }
+
+    .friendlies-mode .scrim-badge {
+      background: #ffffff;
+      color: black;
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .match-info {
+      text-align: right;
+    }
+
+    .match-status {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--highlight);
+      text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .liga2-mode .match-status {
+      color: var(--liga2-accent);
+    }
+
+    .stadium-name {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* LOGO & SCOREBOARD CENTRALIZATION FIX */
+    .scoreboard {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 25px;
+    }
+
+    .team-block {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      width: 170px;
+      justify-content: center;
+    }
+
+    .team-stars {
+      position: absolute;
+      top: -20px;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      gap: 4px;
+      z-index: 5;
+    }
+
+    .star-icon {
+      color: var(--gold);
+      font-size: 16px;
+      line-height: 1;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+    }
+
+    .liga2-mode .star-icon {
+      color: var(--liga2-accent);
+    }
+
+    .futsal-mode .star-icon {
+      color: var(--futsal-accent1);
+    }
+
+    .team-logo-wrapper {
+      position: relative;
+      height: 130px;
+      width: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .team-logo-display {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+    }
+
+    .liga2-mode .team-logo-display {
+      filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+    }
+
+    .team-name-display {
+      height: 50px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 0.5px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+      padding: 0 5px;
+    }
+
+    /* SCORE BOX & MATHEMATICAL CENTERING */
+    .score-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1f0b0b !important;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 3px solid #4a1919 !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 2px 15px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .liga2-mode .score-block {
+      background: #0c172e !important;
+      border-color: #244170 !important;
+    }
+
+    .cup-mode .score-block {
+      background: #261a00 !important;
+      border-color: #4a3400 !important;
+    }
+
+    .futsal-mode .score-block {
+      background: #180929 !important;
+      border-color: #3b1666 !important;
+    }
+
+    .friendlies-mode .score-block {
+      background: #1a1a1a !important;
+      border-color: #404040 !important;
+    }
+
+    .download-mode .score-block {
+      box-shadow: none !important;
+    }
+
+    .score-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+    }
+
+    .score-number {
+      font-size: 55px;
+      font-weight: 900;
+      color: white;
+      line-height: 0.9;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
+      text-align: center;
+    }
+
+    .pen-number {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gold);
+      margin-top: 4px;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+      display: none;
+      text-align: center;
+    }
+
+    .score-divider {
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.3);
+      margin: 0 10px;
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .events-section {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      border-top: 2px solid rgba(255, 255, 255, 0.08);
+      padding-top: 15px;
+      min-height: 40px;
+    }
+
+    .event-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: #f2f2f7;
+      font-weight: 500;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .home-events {
+      text-align: left;
+    }
+
+    .away-events {
+      text-align: right;
+    }
+
+    .goal-icon {
+      color: var(--highlight);
+      font-size: 10px;
+      margin: 0 6px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    }
+
+    .liga2-mode .goal-icon {
+      color: var(--liga2-accent);
+    }
+
+    .forfeit-text {
+      color: var(--highlight);
+      font-weight: 800;
+      font-style: italic;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    .liga2-mode .forfeit-text {
+      color: var(--liga2-accent);
+    }
+
+    .match-notes {
+      display: none;
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .graphic-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .footer-item strong {
+      color: white;
+      font-weight: 800;
+    }
+
+    .motm-text {
+      color: var(--gold);
+      font-weight: 800;
+      text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+
+    .futsal-mode .motm-text {
+      color: var(--futsal-accent1);
+      text-shadow: 0 2px 8px rgba(0, 243, 255, 0.4);
+    }
+
+    .liga2-mode .motm-text {
+      color: var(--gold);
+    }
+
+    .watermark-ron {
+      position: absolute;
+      bottom: 12px;
+      right: 25px;
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      z-index: 10;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .guide-fab {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 45px;
+      height: 45px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border-top);
+      backdrop-filter: blur(20px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 100;
+    }
+
+    body.liga2-bg .guide-fab {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      color: white;
+    }
+
+    .guide-fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .guide-modal {
+      position: fixed;
+      bottom: 85px;
+      right: 25px;
+      width: 280px;
+      background: rgba(15, 2, 2, 0.9);
+      backdrop-filter: blur(25px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      color: white;
+      z-index: 99;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.95);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-origin: bottom right;
+    }
+
+    body.liga2-bg .guide-modal {
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--liga2-text);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .guide-modal.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .guide-modal h3 {
+      margin: 0 0 15px 0;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guide-modal ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    body.liga2-bg .guide-modal h3 {
+      color: white;
+    }
+
+    body.liga2-bg .guide-modal ul {
+      color: var(--liga2-muted);
+    }
+  </style>
+<meta property="og:title" content="SLFL Match Result Generator S3" data-id="th-modified"><meta name="description" content="html" data-id="th-modified"><meta property="og:description" content="html" data-id="th-modified"><meta property="og:image" content="https://tiiny.host/assets/logo-purple-bg.png" data-id="th-modified"><meta property="og:url" content="https://brazzers.tiiny.site/" data-id="th-modified"><meta property="og:type" content="website" data-id="th-modified"><script defer="" data-domain="brazzers.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+
+<body style="background: radial-gradient(circle at top center, var(--bg-light) 0%, var(--bg-dark) 100%);">
+  <div id="image-preloader" style="display: none; width: 0; height: 0; overflow: hidden;"><img src="https://image2url.com/r2/default/images/1772390050613-d612443b-cb40-41b0-98fe-79841bd6261b.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772382022942-92715f33-b43a-418d-b49a-a040013970ca.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1774002260993-89aa2efc-9d17-497b-9c6a-194ed9819cad.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1773766429054-e7d18b29-1a28-434e-bc8a-bdb261907b4f.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772364343704-958c982d-17d9-43be-a369-8d6d86f99933.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1773682507227-f31d7a9b-5faa-4632-86ae-6a9a7a81c2a0.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216248961-4d7bf601-6266-4943-be09-b6533aebd255.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772363864654-c59fb0c8-0380-45dc-8577-4ba3528c0d5e.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1776079329112-0c42adb8-c308-4f57-a89f-e56fbb54b534.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772218430653-f1dcbc07-184e-4987-b7c2-30db0d796b95.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216322117-ba67ca72-05e4-4f43-aee2-c30008999808.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772390124223-88f36335-0625-4a02-af5a-efa7a003a8e5.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772218450108-deead7b5-c484-4b67-8e17-134afc154fb7.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772378561137-533ee20b-f7dd-4f20-b23f-f0281cbe5159.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772363940633-0851c956-9517-48ce-a145-23443ec3da85.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772363992425-31a25e64-f902-497c-861d-fc55f236270d.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216616744-7577467b-f745-40da-bfff-1dfcce1de21c.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772364405665-89e43b31-1c47-483a-87a0-eecbc82fde69.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772216558206-3c1a786b-bfbe-45b0-8525-f28034735617.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1776463034505-4c089357-8e20-420a-bca4-df9738518732.png" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1775947147739-dc888d5b-f179-4fa6-85f7-95bad6f48c57.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1775947198701-7060c2b9-dc3d-48c9-8700-34601d1e4c2c.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772217363769-854453e0-0fc9-4445-96f1-e22b7743f48d.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772354514455-d06b9e67-f0c6-4928-8c12-791c86b277ca.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"><img src="https://image2url.com/r2/default/images/1772981892142-680d220a-6045-4727-a29e-04dd5431a22c.webp" alt="Preload" crossorigin="anonymous" style="width: 1px;"></div>
+
+  <div class="container">
+    <div class="controls">
+
+      <div class="mode-toggle">
+        <button class="mode-btn league active" id="btn-league" onclick="setMode('league')">League</button>
+        <button class="mode-btn cup" id="btn-cup" onclick="setMode('cup')">Cup</button>
+        <button class="mode-btn futsal" id="btn-futsal" onclick="setMode('futsal')">Futsal</button>
+        <button class="mode-btn friendlies" id="btn-friendlies" onclick="setMode('friendlies')">Friendlies</button>
+      </div>
+
+      <div class="sub-toggle" id="league-tier-container" style="display: flex;">
+        <button class="sub-btn active" id="btn-liga1" onclick="setLeagueTier('liga1')">Liga 1</button>
+        <button class="sub-btn" id="btn-liga2" onclick="setLeagueTier('liga2')">Liga 2</button>
+      </div>
+
+      <div class="form-group" id="gameweek-container" style="display: block;">
+        <label>Gameweek Number</label>
+        <input type="number" id="input-gameweek" value="1" min="1" max="38" oninput="updateGraphic()">
+      </div>
+
+      <div class="form-group" id="cup-round-container" style="display: none;">
+        <label>Tournament Round</label>
+        <select id="input-cup-round" onchange="updateGraphic()">
+                <option value="Round of 16">Round of 16</option>
+                <option value="Quarter-Final">Quarter-Final</option>
+                <option value="Semi-Final">Semi-Final</option>
+                <option value="The Final">The Final</option>
+        </select>
+      </div>
+
+      <div class="controls-header">
+        <h2>Match Settings</h2>
+        <button class="btn-scrim" id="btn-scrim" onclick="toggleScrim()">Scrim: OFF</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label>Status</label>
+          <input type="text" id="input-status" value="Full Time" oninput="updateGraphic()">
+        </div>
+        <div class="form-group" style="flex: 1.5;">
+          <label>Stadium Name</label>
+          <input type="text" id="input-stadium" value="SLFL Arena" oninput="updateGraphic()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label>Referee</label>
+          <input type="text" id="input-referee" value="J. Doe" oninput="updateGraphic()">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>MOTM</label>
+          <input type="text" id="input-motm" value="Olaru" oninput="updateGraphic()">
+        </div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <div class="form-group-header">
+            <label>Home Team</label>
+            <button class="btn-fft" onclick="triggerForfeit('home')">FFT</button>
+          </div>
+          <select id="input-home-team" onchange="updateGraphic()"><option value="0">ACS VIITORUL</option><option value="1">CFR CLUJ</option><option value="2">FARUL CONSTANTA</option><option value="3">FC RAPID</option><option value="4">FCSB</option><option value="5">OTELUL</option><option value="6">U CLUJ</option><option value="7">UNIREA SLOBOZIA</option></select>
+        </div>
+
+        <div class="form-group">
+          <label style="margin-bottom: 6px; display:block;">Score</label>
+          <input type="number" id="input-home-score" class="score-input" value="0" min="0" oninput="updateGraphic()">
+        </div>
+        <div class="form-group cup-penalties-input" style="display: none;">
+          <label style="margin-bottom: 6px; display:block;">Pens</label>
+          <input type="number" id="input-home-pens" class="score-input" value="" min="0" placeholder="-" oninput="updateGraphic()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Goals</label>
+        <textarea id="input-home-scorers" placeholder="Popescu 12'" oninput="updateGraphic()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Cards</label>
+        <textarea id="input-home-cards" placeholder="Coman 45' (Y)" oninput="updateGraphic()"></textarea>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <div class="form-group-header">
+            <label>Away Team</label>
+            <button class="btn-fft" onclick="triggerForfeit('away')">FFT</button>
+          </div>
+          <select id="input-away-team" onchange="updateGraphic()"><option value="0">ACS VIITORUL</option><option value="1">CFR CLUJ</option><option value="2">FARUL CONSTANTA</option><option value="3">FC RAPID</option><option value="4">FCSB</option><option value="5">OTELUL</option><option value="6">U CLUJ</option><option value="7">UNIREA SLOBOZIA</option></select>
+        </div>
+        <div class="form-group">
+          <label style="margin-bottom: 6px; display:block;">Score</label>
+          <input type="number" id="input-away-score" class="score-input" value="0" min="0" oninput="updateGraphic()">
+        </div>
+        <div class="form-group cup-penalties-input" style="display: none;">
+          <label style="margin-bottom: 6px; display:block;">Pens</label>
+          <input type="number" id="input-away-pens" class="score-input" value="" min="0" placeholder="-" oninput="updateGraphic()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Goals</label>
+        <textarea id="input-away-scorers" placeholder="Hagi 89'" oninput="updateGraphic()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Cards</label>
+        <textarea id="input-away-cards" placeholder="Marin 60' (R)" oninput="updateGraphic()"></textarea>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+      <div class="form-group">
+        <label>Match Notes (Optional)</label>
+        <textarea id="input-notes" placeholder="e.g. Match delayed..." oninput="updateGraphic()"></textarea>
+      </div>
+
+      <button class="btn-download" onclick="downloadGraphic()">Download Graphic</button>
+    </div>
+
+    <div class="graphic-wrapper">
+      <div class="graphic-preview capture-area" id="capture-area">
+
+        <div class="s3-watermark">S3</div>
+        <div class="watermark-ron">UI by Ron | DM @gamrron for UI</div>
+
+        <div class="graphic-header">
+          <img id="display-main-logo" src="https://image2url.com/r2/default/images/1775947147739-dc888d5b-f179-4fa6-85f7-95bad6f48c57.webp" alt="Tournament Logo" class="league-logo" crossorigin="anonymous">
+
+          <div class="header-center">
+            <h2 id="graphic-title">S3 GAMEWEEK 1</h2>
+            <div class="mini-bracket" id="mini-bracket-container" style="display: none;">
+              <div class="bracket-icon"></div>
+              <span id="display-cup-round">Quarter-Final</span>
+            </div>
+          </div>
+
+          <div class="match-info">
+            <div id="display-scrim-badge" class="scrim-badge">SCRIM</div>
+            <div id="display-status" class="match-status">Full Time</div>
+            <div class="stadium-name">📍 <span id="display-stadium">SLFL Arena</span></div>
+          </div>
+        </div>
+
+        <div class="scoreboard">
+          <div class="team-block">
+            <div id="display-home-stars" class="team-stars"></div>
+            <div class="team-logo-wrapper">
+              <img id="display-home-logo" class="team-logo-display" crossorigin="anonymous" src="https://image2url.com/r2/default/images/1772382022942-92715f33-b43a-418d-b49a-a040013970ca.webp" alt="Home Team">
+            </div>
+            <div id="display-home-name" class="team-name-display">ACS VIITORUL</div>
+          </div>
+
+          <div class="score-block">
+            <div class="score-col">
+              <div id="display-home-score" class="score-number">0</div>
+              <div id="display-home-pens" class="pen-number" style="display: none;">(0)</div>
+            </div>
+            <div class="score-divider">-</div>
+            <div class="score-col">
+              <div id="display-away-score" class="score-number">0</div>
+              <div id="display-away-pens" class="pen-number" style="display: none;">(0)</div>
+            </div>
+          </div>
+
+          <div class="team-block">
+            <div id="display-away-stars" class="team-stars"></div>
+            <div class="team-logo-wrapper">
+              <img id="display-away-logo" class="team-logo-display" crossorigin="anonymous" src="https://image2url.com/r2/default/images/1773766429054-e7d18b29-1a28-434e-bc8a-bdb261907b4f.webp" alt="Away Team">
+            </div>
+            <div id="display-away-name" class="team-name-display">CFR CLUJ</div>
+          </div>
+        </div>
+
+        <div class="events-section">
+          <div class="event-list home-events">
+            <div id="display-home-scorers"></div>
+            <div id="display-home-cards" style="margin-top: 5px;"></div>
+          </div>
+          <div class="event-list away-events">
+            <div id="display-away-scorers"></div>
+            <div id="display-away-cards" style="margin-top: 5px;"></div>
+          </div>
+        </div>
+
+        <div id="display-notes" class="match-notes" style="display: none;"></div>
+
+        <div class="graphic-footer">
+          <div class="footer-item">🕴️ Referee: <strong id="display-referee">J. Doe</strong></div>
+          <div class="footer-item motm-text">⭐ MOTM: <span id="display-motm">Olaru</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-fab" onclick="toggleGuide()">📖</div>
+  <div class="guide-modal" id="guide-modal">
+    <h3>📖 Quick Guide</h3>
+    <ul>
+      <li><b>Modes:</b> Use the top buttons to switch between Liga 1, Liga 2, Futsal, Cup, or Friendlies.</li>
+      <li><b>Scrim Mode:</b> Use the new toggle to flag matches as practice games.</li>
+      <li><b>Instant FFT:</b> Click the red <b>FFT</b> button next to a team to automatically issue a forfeit.</li>
+      <li><b>Cards:</b> Type <b>(Y)</b> next to a player for a 🟨 Yellow, or <b>(R)</b> for a 🟥 Red.</li>
+    </ul>
+  </div>
+
+  <script>
+    let currentMode = 'league';
+    let currentLeagueTier = 'liga1';
+    let isScrim = false;
+
+    const LIGA1_LOGO_URL = "https://image2url.com/r2/default/images/1775947147739-dc888d5b-f179-4fa6-85f7-95bad6f48c57.webp";
+    const LIGA2_LOGO_URL = "https://image2url.com/r2/default/images/1775947198701-7060c2b9-dc3d-48c9-8700-34601d1e4c2c.webp"; 
+    const CUP_LOGO_URL = "https://image2url.com/r2/default/images/1772217363769-854453e0-0fc9-4445-96f1-e22b7743f48d.webp";
+    const FUTSAL_LOGO_URL = "https://image2url.com/r2/default/images/1772354514455-d06b9e67-f0c6-4928-8c12-791c86b277ca.webp";
+    const GENERAL_SLFL_LOGO = "https://image2url.com/r2/default/images/1772981892142-680d220a-6045-4727-a29e-04dd5431a22c.webp";
+
+    const teamStarsConfig = {
+        "UNIREA SLOBOZIA": 2,
+        "OTELUL": 1,
+        "FARUL CONSTANTA": 1
+    };
+
+    const teamsLiga1 = [
+        {name:"FCSB", logo:"https://image2url.com/r2/default/images/1772216322117-ba67ca72-05e4-4f43-aee2-c30008999808.png"},
+        {name:"FARUL CONSTANTA", logo:"https://image2url.com/r2/default/images/1772216248961-4d7bf601-6266-4943-be09-b6533aebd255.png"},
+        {name:"CFR CLUJ", logo:"https://image2url.com/r2/default/images/1773766429054-e7d18b29-1a28-434e-bc8a-bdb261907b4f.webp"},
+        {name:"UNIREA SLOBOZIA", logo:"https://image2url.com/r2/default/images/1772216558206-3c1a786b-bfbe-45b0-8525-f28034735617.png"},
+        {name:"U CLUJ", logo:"https://image2url.com/r2/default/images/1772216616744-7577467b-f745-40da-bfff-1dfcce1de21c.png"},
+        {name:"FC RAPID", logo:"https://image2url.com/r2/default/images/1772218430653-f1dcbc07-184e-4987-b7c2-30db0d796b95.png"}, 
+        {name:"OTELUL", logo:"https://image2url.com/r2/default/images/1772218450108-deead7b5-c484-4b67-8e17-134afc154fb7.png"},
+        {name:"ACS VIITORUL", logo:"https://image2url.com/r2/default/images/1772382022942-92715f33-b43a-418d-b49a-a040013970ca.webp"}
+    ];
+    
+    // UPDATED UTA ARAD
+    const teamsLiga2 = [
+        {name:"AFC METALUL BUZĂU", logo:"https://image2url.com/r2/default/images/1774002260993-89aa2efc-9d17-497b-9c6a-194ed9819cad.png"},
+        {name:"U CRAIOVA", logo:"https://image2url.com/r2/default/images/1772364405665-89e43b31-1c47-483a-87a0-eecbc82fde69.png"},
+        {name:"UTA ARAD", logo:"https://image2url.com/r2/default/images/1776463034505-4c089357-8e20-420a-bca4-df9738518732.png"},
+        {name:"PAN UNITED 67", logo:"https://image2url.com/r2/default/images/1772378561137-533ee20b-f7dd-4f20-b23f-f0281cbe5159.webp"},
+        {name:"FC HERMANNSTADT", logo:"https://image2url.com/r2/default/images/1776079329112-0c42adb8-c308-4f57-a89f-e56fbb54b534.webp"},
+        {name:"FC BOTOSANI", logo:"https://image2url.com/r2/default/images/1772363864654-c59fb0c8-0380-45dc-8577-4ba3528c0d5e.png"},
+        {name:"ACS URBAN TITU", logo:"https://image2url.com/r2/default/images/1772390050613-d612443b-cb40-41b0-98fe-79841bd6261b.png"},
+        {name:"LIGHTNING E-SPORTS", logo:"https://image2url.com/r2/default/images/1772390124223-88f36335-0625-4a02-af5a-efa7a003a8e5.png"}
+    ];
+
+    const teamsFutsal = [
+        {name:"U CRAIOVA", logo:"https://image2url.com/r2/default/images/1772364405665-89e43b31-1c47-483a-87a0-eecbc82fde69.png"},
+        {name:"CORVINUL", logo:"https://image2url.com/r2/default/images/1772364343704-958c982d-17d9-43be-a369-8d6d86f99933.png"},
+        {name:"DINAMO BUCURESTI", logo:"https://image2url.com/r2/default/images/1773682507227-f31d7a9b-5faa-4632-86ae-6a9a7a81c2a0.png"},
+        {name:"POLI IASI", logo:"https://image2url.com/r2/default/images/1772363992425-31a25e64-f902-497c-861d-fc55f236270d.png"},
+        {name:"PETROLUL PLOIESTI", logo:"https://image2url.com/r2/default/images/1772363940633-0851c956-9517-48ce-a145-23443ec3da85.png"},
+        {name:"FC BOTOSANI", logo:"https://image2url.com/r2/default/images/1772363864654-c59fb0c8-0380-45dc-8577-4ba3528c0d5e.png"}
+    ];
+
+    const teamsCup = [...teamsLiga1, ...teamsLiga2].sort((a, b) => a.name.localeCompare(b.name));
+
+    const allTeams = [...teamsLiga1, ...teamsLiga2, ...teamsFutsal];
+    const uniqueFriendliesMap = new Map();
+    allTeams.forEach(t => {
+        if(!uniqueFriendliesMap.has(t.name)) uniqueFriendliesMap.set(t.name, t);
+    });
+    const teamsFriendlies = Array.from(uniqueFriendliesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+    teamsLiga1.sort((a, b) => a.name.localeCompare(b.name));
+    teamsLiga2.sort((a, b) => a.name.localeCompare(b.name));
+    teamsFutsal.sort((a, b) => a.name.localeCompare(b.name));
+
+    let activeTeams = teamsLiga1;
+
+    function preloadImages() {
+        const cacheDiv = document.getElementById('image-preloader');
+        const allImages = [...teamsFriendlies].map(t => t.logo);
+        allImages.push(LIGA1_LOGO_URL, LIGA2_LOGO_URL, CUP_LOGO_URL, FUTSAL_LOGO_URL, GENERAL_SLFL_LOGO);
+        allImages.forEach(src => {
+            const img = new Image();
+            img.src = src;
+            img.alt = "Preload";
+            img.crossOrigin = "anonymous";
+            img.style.width = "1px";
+            cacheDiv.appendChild(img);
+        });
+    }
+
+    window.onload = () => {
+        preloadImages();
+        populateDropdowns();
+        setMode('league'); 
+    };
+
+    function toggleGuide() {
+        document.getElementById('guide-modal').classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.guide-fab') && !event.target.closest('.guide-modal')) {
+            document.getElementById('guide-modal').classList.remove('show');
+        }
+    }
+
+    function toggleScrim() {
+        isScrim = !isScrim;
+        const btn = document.getElementById('btn-scrim');
+        const badge = document.getElementById('display-scrim-badge');
+        
+        if (isScrim) {
+            btn.classList.add('active');
+            btn.innerText = "Scrim: ON";
+            badge.style.display = "inline-block";
+        } else {
+            btn.classList.remove('active');
+            btn.innerText = "Scrim: OFF";
+            badge.style.display = "none";
+        }
+        updateGraphic();
+    }
+
+    function populateDropdowns() {
+        const homeSelect = document.getElementById('input-home-team');
+        const awaySelect = document.getElementById('input-away-team');
+        
+        homeSelect.innerHTML = '';
+        awaySelect.innerHTML = '';
+        activeTeams.forEach((team, index) => {
+            homeSelect.add(new Option(team.name, index));
+            awaySelect.add(new Option(team.name, index));
+        });
+        if(activeTeams.length > 1) {
+            awaySelect.selectedIndex = 1;
+        }
+    }
+
+    function setMode(mode) {
+        currentMode = mode;
+        const captureArea = document.getElementById('capture-area');
+        const logoEl = document.getElementById('display-main-logo');
+        const roundContainer = document.getElementById('cup-round-container');
+        const tierContainer = document.getElementById('league-tier-container');
+        const gameweekContainer = document.getElementById('gameweek-container');
+        const bodyEl = document.body;
+        const penInputs = document.querySelectorAll('.cup-penalties-input');
+        const miniBracket = document.getElementById('mini-bracket-container');
+
+        document.getElementById('btn-league').classList.remove('active');
+        document.getElementById('btn-cup').classList.remove('active');
+        document.getElementById('btn-futsal').classList.remove('active');
+        document.getElementById('btn-friendlies').classList.remove('active');
+        
+        captureArea.className = 'graphic-preview capture-area'; 
+        bodyEl.classList.remove('liga2-bg');
+        
+        penInputs.forEach(el => el.style.display = "none");
+
+        if (mode === 'league') {
+            document.getElementById('btn-league').classList.add('active');
+            tierContainer.style.display = "flex";
+            gameweekContainer.style.display = "block";
+            roundContainer.style.display = "none";
+            miniBracket.style.display = "none";
+            setLeagueTier(currentLeagueTier); 
+            
+        } else if (mode === 'cup') {
+            document.getElementById('btn-cup').classList.add('active');
+            tierContainer.style.display = "none";
+            gameweekContainer.style.display = "none";
+            roundContainer.style.display = "block";
+            miniBracket.style.display = "flex";
+            penInputs.forEach(el => el.style.display = "block");
+            
+            captureArea.classList.add('cup-mode');
+            logoEl.src = CUP_LOGO_URL;
+            bodyEl.style.background = "radial-gradient(circle at top center, var(--cup-light) 0%, var(--cup-dark) 100%)";
+            activeTeams = teamsCup; 
+            populateDropdowns();
+
+        } else if (mode === 'futsal') {
+            document.getElementById('btn-futsal').classList.add('active');
+            tierContainer.style.display = "none";
+            gameweekContainer.style.display = "none";
+            roundContainer.style.display = "none";
+            miniBracket.style.display = "none";
+            
+            captureArea.classList.add('futsal-mode');
+            logoEl.src = FUTSAL_LOGO_URL;
+            bodyEl.style.background = "radial-gradient(circle at top center, var(--futsal-light) 0%, var(--futsal-dark) 100%)";
+            activeTeams = teamsFutsal;
+            populateDropdowns();
+
+        } else if (mode === 'friendlies') {
+            document.getElementById('btn-friendlies').classList.add('active');
+            tierContainer.style.display = "none";
+            gameweekContainer.style.display = "none";
+            roundContainer.style.display = "none";
+            miniBracket.style.display = "none";
+            
+            captureArea.classList.add('friendlies-mode');
+            logoEl.src = GENERAL_SLFL_LOGO;
+            bodyEl.style.background = "radial-gradient(circle at top center, #222 0%, #000 100%)";
+            activeTeams = teamsFriendlies;
+            populateDropdowns();
+        }
+
+        updateGraphic();
+    }
+
+    function setLeagueTier(tier) {
+        currentLeagueTier = tier;
+        const logoEl = document.getElementById('display-main-logo');
+        const captureArea = document.getElementById('capture-area');
+        const bodyEl = document.body;
+        
+        document.getElementById('btn-liga1').classList.remove('active');
+        document.getElementById('btn-liga2').classList.remove('active');
+        captureArea.className = 'graphic-preview capture-area'; 
+
+        if(tier === 'liga1') {
+            document.getElementById('btn-liga1').classList.add('active');
+            logoEl.src = LIGA1_LOGO_URL;
+            activeTeams = teamsLiga1;
+            bodyEl.classList.remove('liga2-bg');
+            bodyEl.style.background = "radial-gradient(circle at top center, var(--bg-light) 0%, var(--bg-dark) 100%)";
+        } else {
+            document.getElementById('btn-liga2').classList.add('active');
+            logoEl.src = LIGA2_LOGO_URL;
+            activeTeams = teamsLiga2;
+            captureArea.classList.add('liga2-mode');
+            bodyEl.classList.add('liga2-bg');
+            bodyEl.style.background = ""; 
+        }
+
+        populateDropdowns();
+        updateGraphic();
+    }
+
+    function getStarsHTML(teamName) {
+        const starCount = teamStarsConfig[teamName] || 0;
+        let html = '';
+        for(let i=0; i<starCount; i++) {
+            html += `<span class="star-icon">★</span>`;
+        }
+        return html;
+    }
+
+    function updateGraphic() {
+        const title = document.getElementById('graphic-title');
+        
+        if (isScrim) {
+            title.innerText = "S3 SCRIM MATCH";
+        } else {
+            if (currentMode === 'league') {
+                let gwVal = document.getElementById('input-gameweek').value;
+                title.innerText = "S3 GAMEWEEK " + gwVal;
+            } else if (currentMode === 'cup') {
+                title.innerText = "S3 CUP TIE";
+                document.getElementById('display-cup-round').innerText = document.getElementById('input-cup-round').value;
+            } else if (currentMode === 'futsal') {
+                title.innerText = "S3 FUTSAL MATCH";
+            } else if (currentMode === 'friendlies') {
+                title.innerText = "S3 CLUB FRIENDLY";
+            }
+        }
+
+        document.getElementById('display-status').innerText = document.getElementById('input-status').value;
+        document.getElementById('display-stadium').innerText = document.getElementById('input-stadium').value;
+        
+        document.getElementById('display-referee').innerText = document.getElementById('input-referee').value || "---";
+        document.getElementById('display-motm').innerText = document.getElementById('input-motm').value || "---";
+        
+        const notesValue = document.getElementById('input-notes').value.trim();
+        const notesDisplay = document.getElementById('display-notes');
+        
+        if (notesValue) {
+            notesDisplay.style.display = "block";
+            notesDisplay.innerText = notesValue;
+        } else {
+            notesDisplay.style.display = "none";
+            notesDisplay.innerText = "";
+        }
+
+        document.getElementById('display-home-score').innerText = document.getElementById('input-home-score').value;
+        document.getElementById('display-away-score').innerText = document.getElementById('input-away-score').value;
+
+        // Pens logic
+        const homePensInput = document.getElementById('input-home-pens').value;
+        const awayPensInput = document.getElementById('input-away-pens').value;
+        const homePensDisplay = document.getElementById('display-home-pens');
+        const awayPensDisplay = document.getElementById('display-away-pens');
+
+        if (currentMode === 'cup' && (homePensInput !== "" || awayPensInput !== "")) {
+            homePensDisplay.style.display = "block";
+            awayPensDisplay.style.display = "block";
+            homePensDisplay.innerText = `(${homePensInput || 0})`;
+            awayPensDisplay.innerText = `(${awayPensInput || 0})`;
+        } else {
+            homePensDisplay.style.display = "none";
+            awayPensDisplay.style.display = "none";
+        }
+
+        const homeIndex = document.getElementById('input-home-team').value;
+        const awayIndex = document.getElementById('input-away-team').value;
+
+        const homeTeam = activeTeams[homeIndex];
+        const awayTeam = activeTeams[awayIndex];
+
+        if (homeTeam) {
+            document.getElementById('display-home-name').innerText = homeTeam.name;
+            document.getElementById('display-home-logo').src = homeTeam.logo;
+            document.getElementById('display-home-stars').innerHTML = getStarsHTML(homeTeam.name);
+        }
+        
+        if (awayTeam) {
+            document.getElementById('display-away-name').innerText = awayTeam.name;
+            document.getElementById('display-away-logo').src = awayTeam.logo;
+            document.getElementById('display-away-stars').innerHTML = getStarsHTML(awayTeam.name);
+        }
+
+        formatEvents('input-home-scorers', 'display-home-scorers', true, 'goal');
+        formatEvents('input-away-scorers', 'display-away-scorers', false, 'goal');
+        formatEvents('input-home-cards', 'display-home-cards', true, 'card');
+        formatEvents('input-away-cards', 'display-away-cards', false, 'card');
+    }
+
+    function formatEvents(inputId, displayId, isHome, type) {
+        let text = document.getElementById(inputId).value.trim();
+        const displayBox = document.getElementById(displayId);
+        
+        if (text === "") { displayBox.innerHTML = ""; return; }
+        if (text === "FORFEIT") { displayBox.innerHTML = `<div class="forfeit-text">Match Forfeited</div>`; return; }
+        if (type === 'card') { text = text.replace(/\(Y\)/gi, "🟨").replace(/\(R\)/gi, "🟥"); }
+
+        const lines = text.split('\n');
+        let html = "";
+        
+        lines.forEach(line => {
+            if (line.trim() !== "") {
+                let icon = type === 'goal' ? `<span class="goal-icon">⚽</span>` : '';
+                if (isHome) { html += `<div>${line} ${icon}</div>`; } 
+                else { html += `<div>${icon} ${line}</div>`; }
+            }
+        });
+
+        displayBox.innerHTML = html;
+    }
+
+    function triggerForfeit(teamForfeiting) {
+        document.getElementById('input-status').value = "Forfeit";
+        document.getElementById('input-motm').value = "N/A";
+        document.getElementById('input-home-pens').value = "";
+        document.getElementById('input-away-pens').value = "";
+
+        if (teamForfeiting === 'home') {
+            document.getElementById('input-home-score').value = 0;
+            document.getElementById('input-away-score').value = 3;
+            document.getElementById('input-home-scorers').value = "FORFEIT";
+            document.getElementById('input-home-cards').value = "";
+            document.getElementById('input-away-scorers').value = "Awarded Win 90'";
+        } else {
+            document.getElementById('input-home-score').value = 3;
+            document.getElementById('input-away-score').value = 0;
+            document.getElementById('input-home-scorers').value = "Awarded Win 90'";
+            document.getElementById('input-away-scorers').value = "FORFEIT";
+            document.getElementById('input-away-cards').value = "";
+        }
+        updateGraphic();
+    }
+
+    function downloadGraphic() {
+        const captureArea = document.getElementById('capture-area');
+        const downloadBtn = document.querySelector('.btn-download');
+        
+        const originalText = downloadBtn.innerText;
+        downloadBtn.innerText = "Processing 4K...";
+        downloadBtn.disabled = true;
+
+        document.body.classList.add('exporting');
+        captureArea.classList.add('download-mode');
+        window.scrollTo(0, 0);
+        
+        setTimeout(() => {
+            html2canvas(captureArea, { 
+                useCORS: true, 
+                allowTaint: false,
+                scale: 3, 
+                backgroundColor: null 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                
+                let filename = isScrim ? 'SLFL_S3_Scrim_Result.png' : 'SLFL_S3_Liga1_Result.png';
+                if(!isScrim && currentMode === 'league' && currentLeagueTier === 'liga2') filename = 'SLFL_S3_Liga2_Result.png';
+                if(!isScrim && currentMode === 'cup') filename = 'SLFL_S3_Cup_Result.png';
+                if(!isScrim && currentMode === 'futsal') filename = 'SLFL_S3_Futsal_Result.png';
+                if(!isScrim && currentMode === 'friendlies') filename = 'SLFL_S3_Friendlies_Result.png';
+
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                
+                document.body.classList.remove('exporting');
+                captureArea.classList.remove('download-mode');
+                downloadBtn.innerText = originalText;
+                downloadBtn.disabled = false;
+            }).catch(err => {
+                console.error(err);
+                document.body.classList.remove('exporting');
+                captureArea.classList.remove('download-mode');
+                alert("Error: If running locally, please host it on Tiiny.host or CodePen for downloads to work!");
+                downloadBtn.innerText = originalText;
+                downloadBtn.disabled = false;
+            });
+        }, 300);
+    }
+  </script>
+
+
+
+</body></html>
